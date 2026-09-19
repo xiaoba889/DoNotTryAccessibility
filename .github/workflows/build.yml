@@ -1,4 +1,4 @@
-name: Build Release APK
+name: Build APK
 
 on:
   workflow_dispatch:
@@ -11,19 +11,25 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '17'
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build Release APK
-        run: ./gradlew assembleRelease --no-daemon
+      # 在编译前自动处理签名配置，无需手动改动源码仓库
+      - name: Bypass custom signing config
+        run: |
+          sed -i 's/"universal"/"debug"/g' app/build.gradle.kts
+          sed -i -E 's/(create|register)\s*\("debug"\)/\1("unused")/g' app/build.gradle.kts
 
-      - name: Upload Release APK
+      - name: Build Release APK
+        run: ./gradlew assembleRelease --stacktrace
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: DoNotTryAccessibility-Release
