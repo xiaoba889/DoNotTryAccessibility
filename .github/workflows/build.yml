@@ -20,6 +20,12 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      # 在编译前自动处理签名配置，无需手动改动源码仓库
+      - name: Bypass custom signing config
+        run: |
+          sed -i 's/"universal"/"debug"/g' app/build.gradle.kts
+          sed -i -E 's/(create|register)\s*\("debug"\)/\1("unused")/g' app/build.gradle.kts
+
       - name: Build Debug APK
         run: ./gradlew assembleDebug --stacktrace
 
