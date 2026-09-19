@@ -26,8 +26,8 @@ jobs:
           sed -i 's/"universal"/"debug"/g' app/build.gradle.kts
           sed -i -E 's/(create|register)\s*\("debug"\)/\1("unused")/g' app/build.gradle.kts
 
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace
+      - name: Build Release APK
+        run: ./gradlew assembleRelease --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
